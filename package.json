@@ -1,0 +1,30 @@
+{
+  "name": "hobbes-network-format",
+  "version": "0.0.1",
+  "description": "Hobbes network filesystem format (HNFF) validator and tools",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ucd-cws/hobbes-network-format.git"
+  },
+  "keywords": [
+    "hobbes",
+    "ucd",
+    "cws"
+  ],
+  "author": "Justin Merz <jrmerz@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ucd-cws/hobbes-network-format/issues"
+  },
+  "homepage": "https://github.com/ucd-cws/hobbes-network-format#readme",
+  "dependencies": {
+    "async": "^1.5.2",
+    "csv-parse": "^1.0.2",
+    "extend": "^3.0.0",
+    "walk": "^2.3.9"
+  }
+}
