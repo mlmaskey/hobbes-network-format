@@ -3,9 +3,9 @@ Hobbes network filesystem format (HNFF) validator and tools
 
 ## README Overview
 
-- [File Types](file-types)
-- [Folder Structure](folder-structure)
-- [File Types](file-types)
+- [File Types](#file-types)
+- [Folder Structure](#folder-structure)
+- [File Types](#file-types)
 
 ## File Types
 
