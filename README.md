@@ -1,11 +1,16 @@
 # hobbes-network-format
 Hobbes network filesystem format (HNFF) validator and tools
 
+## README Overview
+
+- [File Types](file-types)
+- [Folder Structure](folder-structure)
+- [File Types](file-types)
 
 ## File Types
 
 The Hobbes network filesystem as four file types:
-[nodes](#Nodes), [links](#Links), [regions](#Regions) and [config](#Config).
+[nodes](#nodes), [links](#links), [regions](#regions) and [config](#config).
 Please see sections below for details on each.
 
 #### Config
@@ -142,3 +147,72 @@ Structure
       - node.geojson
     - Link2
       - link.geojson
+
+## Referencing Data
+
+The Hobbes Network Filesystem Format is designed to help you develop network
+data using the power of source control systems like GIT.  In order to help track
+changes within your data it is helpful to break out your node data into several
+files.
+
+Let's use the example of timeseries data.  Say for a node you want to have timeseries
+data for 100 years at a 1 month interval.  You may want to update this dataset
+frequently, but the node never moves.  Or, conversely, you may move the node, but
+timeseries data doesn't change.  Having two separate files, one for the data
+and one for the geojson helps track when only one component changes.  Also, separating
+the data from the geojson keeps the geojson file 'human-readable' (hopefully).
+
+#### $ref
+
+In order to link external resources to a geojson file, we have introduced? (well
+it my be a not well used standard...) a $ref notation.  The $ref contains a path
+to the file that should be read in.
+
+Let's say we have a fully formed node that looks like:
+```json
+{
+  "type" : "Feature",
+  "geometry" : {
+    "type" : "Point",
+    "coordinates" : [0, 0]
+  },
+  "properties" : {
+    "id" : "12345",
+    "timeseries" : [
+      ["Date", "KAF"],
+      ["1901-10", 1.23],
+      ["1901-11", 1.23]
+      .....
+    ]
+  }
+}
+```
+
+We can split out the timeseries file into it's own data.csv file.  So now the
+node would look like:
+
+```json
+{
+  "type" : "Feature",
+  "geometry" : {
+    "type" : "Point",
+    "coordinates" : [0, 0]
+  },
+  "properties" : {
+    "id" : "12345",
+    "timeseries" : {
+      "$ref" : "data.csv"
+    }
+  }
+}
+```
+
+Were the $ref is the relative path to the data file.
+
+#### $ref filetypes
+
+Currently .json and .csv files have advanced parsing support.  JSON files will
+be parsed as json and replace the $ref with the newly parsed object.  CSV files
+will be parsed and replace the $ref with a multi dimensional array.
+
+Other formats will be read, but there contents will be inserted as a String value.
