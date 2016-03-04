@@ -5,7 +5,7 @@ Hobbes network filesystem format (HNFF) validator and tools
 
 - [File Types](#file-types)
 - [Folder Structure](#folder-structure)
-- [File Types](#file-types)
+- [Referencing Data Files](#referencing-data-files)
 
 ## File Types
 
@@ -148,7 +148,7 @@ Structure
     - Link2
       - link.geojson
 
-## Referencing Data
+## Referencing Data Files
 
 The Hobbes Network Filesystem Format is designed to help you develop network
 data using the power of source control systems like GIT.  In order to help track
