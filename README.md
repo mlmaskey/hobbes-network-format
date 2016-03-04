@@ -116,18 +116,18 @@ under node.properties.hobbes.
 Your nodes and links should be organized by Region.  While this is not a requirement
 (the Hobbes Network Filesystem Crawler will run just fine w/o region.geojson files),
 Regions give you a nice way to break out your nodes/links into multiple folders,
-providing easier lookups when editing and avoid giant folders with an unwieldy
+providing easier lookups when editing and avoids giant folders with an unwieldy
 number of nodes.
 
-In each region folder, you should provide a folders for nodes/links within that
+In each region folder, you should provide folders for nodes/links within that
 region.  Each region folder can also contain other region folders, so regions can
 have sub-regions.
 
 Finally, each node/link should have it's own folder containing a node.geojson or
 link.geojson file.  The node/link folder can then contain any number of resource
-files referenced via the $ref attribute.  More about this below.
+files referenced via the $ref property.  More about the $ref property below below.
 
-Structure
+**File System Structure**
 - Root
   - Region1
     - Node1
@@ -148,6 +148,8 @@ Structure
     - Link2
       - link.geojson
 
+You can see a real world example of the calvin network [here](https://github.com/ucd-cws/calvin-network-data/tree/master/data).
+
 ## Referencing Data Files
 
 The Hobbes Network Filesystem Format is designed to help you develop network
@@ -159,14 +161,15 @@ Let's use the example of timeseries data.  Say for a node you want to have times
 data for 100 years at a 1 month interval.  You may want to update this dataset
 frequently, but the node never moves.  Or, conversely, you may move the node, but
 timeseries data doesn't change.  Having two separate files, one for the data
-and one for the geojson helps track when only one component changes.  Also, separating
-the data from the geojson keeps the geojson file 'human-readable' (hopefully).
+and one for the geojson, helps track when only one component changes and the other
+does not.  Also, separating the data from the geojson keeps the geojson file
+'human-readable' (hopefully).
 
 #### $ref
 
-In order to link external resources to a geojson file, we have introduced? (well
-it my be a not well used standard...) a $ref notation.  The $ref contains a path
-to the file that should be read in.
+In order to link external data files to a geojson file, we have introduced? (well
+it may be a not well used standard...) a $ref notation.  The $ref contains a
+relative path to the file that should be read.
 
 Let's say we have a fully formed node that looks like:
 ```json
@@ -181,14 +184,14 @@ Let's say we have a fully formed node that looks like:
     "timeseries" : [
       ["Date", "KAF"],
       ["1901-10", 1.23],
-      ["1901-11", 1.23]
+      ["1901-11", 1.56]
       .....
     ]
   }
 }
 ```
 
-We can split out the timeseries file into it's own data.csv file.  So now the
+We can split out the timeseries data into it's own data.csv file.  So now the
 node would look like:
 
 ```json
@@ -209,7 +212,7 @@ node would look like:
 
 Were the $ref is the relative path to the data file.
 
-#### $ref filetypes
+#### $ref file parsing
 
 Currently .json and .csv files have advanced parsing support.  JSON files will
 be parsed as json and replace the $ref with the newly parsed object.  CSV files
