@@ -1,13 +1,13 @@
 {
   "name": "hobbes-network-format",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Hobbes network filesystem format (HNFF) validator and tools",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "prm": "bin/hnf.js"
+    "hnf": "bin/hnf.js"
   },
   "repository": {
     "type": "git",
