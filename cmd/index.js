@@ -10,8 +10,8 @@ program
   .parse(process.argv);
 
 if( !program.directory ) {
-  console.error('Directory Required');
-  process.exit(-1);
+  program.outputHelp();
+  return;
 }
 
 var options = {
