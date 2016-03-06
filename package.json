@@ -1,6 +1,6 @@
 {
   "name": "hobbes-network-format",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Hobbes network filesystem format (HNFF) validator and tools",
   "main": "index.js",
   "scripts": {
@@ -26,9 +26,12 @@
   "homepage": "https://github.com/ucd-cws/hobbes-network-format#readme",
   "dependencies": {
     "async": "^1.5.2",
+    "colors": "^1.1.2",
     "commander": "^2.9.0",
     "csv-parse": "^1.0.2",
     "extend": "^3.0.0",
+    "is-my-json-valid": "^2.13.1",
+    "tv4": "^1.2.7",
     "walk": "^2.3.9"
   }
 }

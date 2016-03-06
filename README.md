@@ -6,6 +6,7 @@ Hobbes network filesystem format (HNFF) validator and tools
 - [File Types](#file-types)
 - [Folder Structure](#folder-structure)
 - [Referencing Data Files](#referencing-data-files)
+- [Command Line Tool](#command-line-tool)
 
 ## File Types
 
@@ -219,3 +220,35 @@ be parsed as json and replace the $ref with the newly parsed object.  CSV files
 will be parsed and replace the $ref with a multi dimensional array.
 
 Other formats will be read, but there contents will be inserted as a String value.
+
+## Command Line Tool
+
+This repo can be used as a dependency in your project, exposing the directory crawler.
+Optionally, you can install this tool via npm globally and add the hnf command
+line tool:
+
+```bash
+npm install -g hobbes-network-format
+```
+
+You can then use the 'hnf' command to access various parts of the network as well
+as verify all parts of the network are working.
+
+Use --help for all options
+```bash
+hnf --help
+```
+
+#### Examples:
+
+Print all node, links and regions.
+
+```bash
+hnf -d /path/to/you/data/repo
+```
+
+Verify the final result of all nodes and regions are valid geojson.
+
+```bash
+hnf -d /path/to/you/data/repo -e
+```
