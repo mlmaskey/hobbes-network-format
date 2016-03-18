@@ -12,7 +12,7 @@ module.exports = function(path, o, callback) {
     reindex : o.reindex || false
   };
 
-  crawler(program.directory, options, function(resp, options){
-    onCrawlComplete(resp, options);
+  crawler(path, options, function(resp, options){
+    callback(resp, options);
   });
 };
