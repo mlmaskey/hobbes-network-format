@@ -1,6 +1,6 @@
 var crawler = require('./lib/crawler');
 
-module.exports = function(path, o, callback) {
+function crawl(path, o, callback) {
   if( typeof o === 'function' ) {
     callback = o;
     o = {};
@@ -15,4 +15,14 @@ module.exports = function(path, o, callback) {
   crawler(path, options, function(resp, options){
     callback(resp, options);
   });
+}
+
+
+
+var hnf = {
+  expand : require('./lib/expand'),
+  crawl : crawl,
+  aggregate : aggregate
 };
+
+module.exports = hnf;
