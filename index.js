@@ -21,8 +21,9 @@ function crawl(path, o, callback) {
 
 var hnf = {
   expand : require('./lib/expand'),
+  split : require('./lib/split'),
   crawl : crawl,
-  aggregate : aggregate
+  aggregate : require('./lib/aggregate')
 };
 
 module.exports = hnf;
