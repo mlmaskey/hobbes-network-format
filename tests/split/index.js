@@ -27,4 +27,16 @@ describe('hnf.split', function() {
     });
   });
 
+  it('should return split out network', function(next) {
+    this.timeout(10000);
+
+    hnf.split(config.path, {}, ['SR_SHA-D5'], function(resp){
+
+      console.log(resp.in.map(toIds));
+      console.log(resp.edge.in.map(toIds));
+      console.log(resp.edge.out.map(toIds));
+      next();
+    });
+  });
+
 });
