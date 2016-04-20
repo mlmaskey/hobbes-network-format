@@ -32,9 +32,10 @@ describe('hnf.split', function() {
 
     hnf.split(config.path, {}, ['SR_SHA-D5'], function(resp){
 
-      console.log(resp.in.map(toIds));
-      console.log(resp.edge.in.map(toIds));
-      console.log(resp.edge.out.map(toIds));
+      assert.deepEqual([ 'SR_SHA-D5' ], resp.in.map(toIds));
+      assert.deepEqual([ 'SR_SHA' ], resp.edge.in.map(toIds));
+      assert.deepEqual([ 'D5' ], resp.edge.out.map(toIds));
+
       next();
     });
   });
