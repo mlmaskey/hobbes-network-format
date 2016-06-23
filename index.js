@@ -1,4 +1,5 @@
 var crawler = require('./lib/crawler');
+var _readFile = require('./lib/crawler/readFile');
 
 function crawl(path, o, callback) {
   if( typeof o === 'function' ) {
@@ -17,13 +18,18 @@ function crawl(path, o, callback) {
   });
 }
 
+function readFile(obj, attr, callback) {
+  _readFile(obj[attr].$ref, obj, attr, true, false, callback);
+}
+
 
 
 var hnf = {
   expand : require('./lib/expand'),
   split : require('./lib/split'),
   crawl : crawl,
-  aggregate : require('./lib/aggregate')
+  aggregate : require('./lib/aggregate'),
+  readFile : readFile
 };
 
 module.exports = hnf;
