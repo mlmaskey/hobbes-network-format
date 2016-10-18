@@ -1,5 +1,5 @@
 var crawler = require('./lib/crawler');
-var _readFile = require('./lib/crawler/readFile');
+var _readFile = require('./lib/expand/readFile');
 
 function crawl(path, o, callback) {
   if( typeof o === 'function' ) {
