@@ -24,7 +24,7 @@ function process(link) {
 
   fs.symlinkSync(origin, path.join(link.path,'origin'));
   fs.symlinkSync(terminus, path.join(link.path,'terminus'));
-  
+
   fs.unlinkSync(path.join(link.path, link.file));
   fs.writeFileSync(path.join(link.path, link.file), JSON.stringify(data.properties ? data.properties : data, '  ', '  '));
 

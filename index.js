@@ -8,9 +8,8 @@ function crawl(path, o, callback) {
   }
 
   var options = {
-    parseCsvData: o.parseCsvData || false,
-    debug: o.verbose || false,
-    reindex : o.reindex || false
+    onlyParse: o.onlyParse || false,
+    debug: o.verbose || false
   };
 
   crawler(path, options, function(resp, options){
