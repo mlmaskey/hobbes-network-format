@@ -1,6 +1,6 @@
 {
   "name": "hobbes-network-format",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Hobbes network filesystem format (HNFF) validator and tools",
   "main": "index.js",
   "scripts": {
