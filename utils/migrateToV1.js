@@ -1,7 +1,7 @@
 var walk = require('../lib/crawler/fast-walk');
 var path = require('path');
 var fs = require('fs');
-var dir = '/Users/jrmerz/dev/watershed/calvin-network-data-v2/data';
+var dir = process.argv[2];
 
 var dirs = walk(dir);
 var nodesByPrm = {};
