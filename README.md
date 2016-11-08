@@ -3,45 +3,51 @@ Hobbes network filesystem format (HNFF) validator and tools
 
 ## README Overview
 
+- [Network Identifiers](#network-identifiers)
 - [File Types](#file-types)
 - [Folder Structure](#folder-structure)
 - [Referencing Data Files](#referencing-data-files)
 - [Command Line Tool](#command-line-tool)
 
+
+## Network Identifiers
+
+All nodes, links and regions in the network will be given an identifier based on the full path to the
+folder containing the node link or region.  Note, only one node, link or region file is allowed per
+folder.
+
+### Example
+
+Say we have the following format file format:
+
+- california
+  - delta
+    - region.json
+    - delta-link
+      - link.json
+      - origin
+      - terminus
+    - north-bay
+      - node.json
+    - central-basin-west
+      - node.json
+
+This would create:
+- region, id: california/delta
+- link, id: california/delta-link
+- node, id: california/north-bay
+- node, id: california/central-basin-west
+
 ## File Types
 
-The Hobbes network filesystem as four file types:
-[nodes](#nodes), [links](#links), [regions](#regions) and [config](#config).
+The Hobbes network filesystem as three file types:
+[nodes](#nodes), [links](#links) and [regions](#regions).
 Please see sections below for details on each.
-
-#### Config
-
-At the root of your data directory should be a conf.json.  This file contains
-the following information:
-
-```json
-{
-  "id" : "prmname",
-  "region" : "region.geojson",
-  "node" : "node.geojson",
-  "link" : "link.geojson"
-}
-```
-
-Parameters
- - id: Unique id variable for the node.  Defaults to **id**.
- - region: Name of region geojson files. Defaults to **region.geojson**.
- - node: Name of node geojson files. Defaults to **node.geojson**.
- - link: Name of link geojson files. Defaults to **link.geojson**.
-
-This file is optional.  All defaults will be used if file is not provided.
 
 #### Nodes
 
-Nodes should be geojson formatted with type 'Feature' and geometry type 'Point'.
-Nodes should provide a unique identifier.  The default property for this identifier
-is node.properties.id, but an alternative property can be specified in the conf.json
-file.
+Nodes should be geojson formatted with type 'Feature' and geometry type 'Point'.  Nodes
+should be specified in their own folder with filename **node.geojson** or **node.json**.
 
 ```json
 {
@@ -51,7 +57,7 @@ file.
     "coordinates" : [0, 0]
   },
   "properties" : {
-    "id" : "12345",
+    "value" : 123,
     "other" : "prop"
     ....
   }
@@ -59,36 +65,100 @@ file.
 ```
 
 Additional information will be added by the Hobbes Network Filesystem Crawler in
-under node.properties.hobbes.
+under node.properties.hobbes :
+
+```js
+hobbes : {
+  // list of all parent region identifiers.
+  regions : [],
+  // Parent region identifier
+  region : String,
+  
+  // git repository information
+  repo : {
+    
+    // remote origin domain name, ex: 'github.com'
+    origin : String,
+    
+    // repository path, 'org/repo'
+    repository : String,
+    
+    // within the repo, path to the root of the network tree, ex: '/data'
+    networkDataPath : String,
+    
+    // latest tag
+    tag : String,
+    
+    // current commit
+    commit : String,
+    
+    // path from networkDataPath to parent folder
+    path : String,
+    
+    // name of file, ex: 'node.json'
+    filename : String,
+    
+    // $ref information
+    files : [
+      {
+        // path provided by the $ref attribute
+        path : String,
+        // $ref attribute path within the object.  ex: properties.sinks.0.default.flow.$ref
+        attribute : String
+      } // ...
+    ]
+  }
+
+  // nodes will always be of hobbes type 'node' 
+  type : 'node',
+  
+  // hobbes uid for node, generated from path
+  id : String,
+  
+  // links that have this node as the terminus
+  origins : [
+    {
+      // origin node id
+      node : String,
+      // origin link id
+      link : String
+    }, // ...
+  ],
+
+  // links that have this node as the origin
+  terminals : [
+    {
+      // terminus node id
+      node : String,
+      // terminus link id
+      link : String
+    }, // ...
+  ]
+}
+```
 
 #### Links
 
-Links should be geojson formatted with type 'Feature'.  Links should NOT provide
-a geometry.  However, the link MUST provide an 'origin' and 'terminus' property instead.
-The 'origin' and 'terminus' property values should be the unique identifier of the links
-origin and terminus nodes respectively.  The Hobbes Network Filesystem Crawler
+Links should be json formatted.  However, the link MUST provide an 'origin' and 'terminus' 
+symbolic links within the same directory. The 'origin' and 'terminus' should point at the 
+origin node and terminus folders respectively.  The Hobbes Network Filesystem Crawler
 will lookup the origin and terminus nodes when crawling the network and set the
-appropriate 'LineString' geometry based on the geometry of the two nodes.
+appropriate 'LineString' geometry based on the geometry of the two nodes.  The json object
+will be set as the 'properties' of the newly created geojson object.
 
-The link should provide a default property for this identifier as well.  Like the
-node, the default id attribute is node.properties.id, but an alternative property
-can be specified in the conf.json file.
 
 ```json
 {
-  "type" : "Feature",
-  "properties" : {
-    "id" : "12345-67890",
-    "origin" : "12345",
-    "terminus" : "67890",
+    "value" : 345,
     "other" : "prop"
-    ....
-  }
 }
 ```
 
 Additional information will be added by the Hobbes Network Filesystem Crawler in
 under node.properties.hobbes.
+
+
+
 
 #### Regions
 
