@@ -157,7 +157,61 @@ will be set as the 'properties' of the newly created geojson object.
 Additional information will be added by the Hobbes Network Filesystem Crawler in
 under node.properties.hobbes.
 
+```js
+hobbes : {
+  // list of all parent region identifiers.  Including origin and terminus nodes
+  regions : [],
+  // Parent region identifier
+  region : String,
+  
+  // git repository information
+  repo : {
+    
+    // remote origin domain name, ex: 'github.com'
+    origin : String,
+    
+    // repository path, 'org/repo'
+    repository : String,
+    
+    // within the repo, path to the root of the network tree, ex: '/data'
+    networkDataPath : String,
+    
+    // latest tag
+    tag : String,
+    
+    // current commit
+    commit : String,
+    
+    // path from networkDataPath to parent folder
+    path : String,
+    
+    // name of file, ex: 'link.json'
+    filename : String,
+    
+    // $ref information
+    files : [
+      {
+        // path provided by the $ref attribute
+        path : String,
+        // $ref attribute path within the object.  ex: properties.flow.$ref
+        attribute : String
+      } // ...
+    ]
+  }
 
+  // links will always be of hobbes type 'link' 
+  type : 'link',
+  
+  // hobbes uid for link, generated from path
+  id : String,
+  
+  // Origin node id
+  origin : String,
+
+  // Terminus node id
+  terminus : String
+}
+```
 
 
 #### Regions
@@ -182,20 +236,94 @@ Regions should be geojson formatted with type 'Polygon' or 'MultiPolygon'.
 Additional information will be added by the Hobbes Network Filesystem Crawler in
 under node.properties.hobbes.
 
+```js
+hobbes : {
+  // list of all parent region identifiers.  Including origin and terminus nodes
+  regions : [],
+  // Parent region identifier
+  region : String,
+  
+  // git repository information
+  repo : {
+    
+    // remote origin domain name, ex: 'github.com'
+    origin : String,
+    
+    // repository path, 'org/repo'
+    repository : String,
+    
+    // within the repo, path to the root of the network tree, ex: '/data'
+    networkDataPath : String,
+    
+    // latest tag
+    tag : String,
+    
+    // current commit
+    commit : String,
+    
+    // path from networkDataPath to parent folder
+    path : String,
+    
+    // name of file, ex: 'region.json'
+    filename : String,
+    
+    // $ref information
+    files : []
+  }
+
+  // regions will always be of hobbes type 'region' 
+  type : 'regoin',
+  
+  // hobbes uid for region, generated from path
+  id : String,
+  
+  // Origin node id
+  origin : String,
+
+  // List of all nodes that exist outside the region but have a link whos 
+  // origin startes with the region.
+  terminals : [
+    {
+      // outgoing link id
+      link : String,
+      // external node id
+      node : String
+    }
+  ],
+
+  // List of all nodes that exist outside the region but have a link whos 
+  // origin starts at the node and whos terminus ends at a node inside the region.
+  origins : [
+    {
+      // incoming link id
+      link : String,
+      // external node id
+      node : String
+    }
+  ],
+
+  // List of id's for all nodes within the region
+  nodes : [],
+
+  // List of id's for all links within the region or whos origin or terminus exists with
+  // the region
+  links : []
+}
+```
+
 ## Folder Structure
 
-Your nodes and links should be organized by Region.  While this is not a requirement
+Your nodes, links and region should be organized by folder.  While not a requirement
 (the Hobbes Network Filesystem Crawler will run just fine w/o region.geojson files),
 Regions give you a nice way to break out your nodes/links into multiple folders,
 providing easier lookups when editing and avoids giant folders with an unwieldy
 number of nodes.
 
-In each region folder, you should provide folders for nodes/links within that
-region.  Each region folder can also contain other region folders, so regions can
-have sub-regions.
+In each folder, you should provide folders for nodes/links.  If you would like to define
+the folder as region, add a region.json file.
 
 Finally, each node/link should have it's own folder containing a node.geojson or
-link.geojson file.  The node/link folder can then contain any number of resource
+link.json file.  The node/link folder can then contain any number of resource
 files referenced via the $ref property.  More about the $ref property below below.
 
 **File System Structure**
@@ -208,7 +336,9 @@ files referenced via the $ref property.  More about the $ref property below belo
       - node.geojson
       - data.csv
     - Link1
-      - link.geojson
+      - link.json
+      - origin
+      - terminus
     - Region1a
       - Node1a
         - node.geojson
@@ -217,14 +347,16 @@ files referenced via the $ref property.  More about the $ref property below belo
     - Node3
       - node.geojson
     - Link2
-      - link.geojson
+      - link.json
+      - origin
+      - terminus
 
 You can see a real world example of the calvin network [here](https://github.com/ucd-cws/calvin-network-data/tree/master/data).
 
 ## Referencing Data Files
 
 The Hobbes Network Filesystem Format is designed to help you develop network
-data using the power of source control systems like GIT.  In order to help track
+data using the power of source control systems like Git.  In order to help track
 changes within your data it is helpful to break out your node data into several
 files.
 
@@ -251,7 +383,6 @@ Let's say we have a fully formed node that looks like:
     "coordinates" : [0, 0]
   },
   "properties" : {
-    "id" : "12345",
     "timeseries" : [
       ["Date", "KAF"],
       ["1901-10", 1.23],
@@ -273,9 +404,8 @@ node would look like:
     "coordinates" : [0, 0]
   },
   "properties" : {
-    "id" : "12345",
     "timeseries" : {
-      "$ref" : "data.csv"
+      "$ref" : "./data.csv"
     }
   }
 }
@@ -293,9 +423,9 @@ Other formats will be read, but there contents will be inserted as a String valu
 
 ## Command Line Tool
 
-This repo can be used as a dependency in your project, exposing the directory crawler.
-Optionally, you can install this tool via npm globally and add the hnf command
-line tool:
+This repo can be used as a dependency in your project, exposing multiple helper methods
+including the crawler method. Optionally, you can install this tool via npm globally and 
+add the hnf command line tool:
 
 ```bash
 npm install -g hobbes-network-format
