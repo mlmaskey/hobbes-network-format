@@ -45,6 +45,26 @@
       "outDir": null
     },
     {
+      "name": "verify",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/lib/validate/test.js",
+      "stopOnEntry": false,
+      "args": [],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "externalConsole": false,
+      "sourceMaps": true,
+      "outDir": null
+    },
+    {
       "name": "Attach",
       "type": "node",
       "request": "attach",

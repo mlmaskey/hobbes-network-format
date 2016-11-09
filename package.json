@@ -31,7 +31,7 @@
     "csv-parse": "^1.0.2",
     "escape-string-regexp": "^1.0.5",
     "extend": "^3.0.0",
-    "is-my-json-valid": "^2.13.1",
+    "is-my-json-valid": "^2.15.0",
     "tv4": "^1.2.7",
     "walk": "^2.3.9"
   }
