@@ -34,18 +34,18 @@ process.stdout.write('Processing network');
 
 var i = 0;
 var timer = setInterval(function() {
-  process.stdout.clearLine();  // clear current text
-  process.stdout.cursorTo(0);  // move cursor to beginning of line
+  process.stdout.clearLine();
+  process.stdout.cursorTo(0);
   i = (i + 1) % 4;
   var dots = new Array(i + 1).join('.');
-  process.stdout.write('Processing network' + dots);  // write text
+  process.stdout.write('Processing network' + dots);
 }, 500);
 
 
 validate(dir, (results) => {
   clearInterval(timer);
-  process.stdout.clearLine();  // clear current text
-  process.stdout.cursorTo(0);  // move cursor to beginning of line
+  process.stdout.clearLine();
+  process.stdout.cursorTo(0);
 
   console.log(`
 Found:
