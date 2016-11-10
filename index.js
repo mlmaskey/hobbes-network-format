@@ -25,9 +25,8 @@ function readFile(obj, attr, callback) {
 
 var hnf = {
   expand : require('./lib/expand'),
-  split : require('./lib/split'),
+  validate : require('./lib/validate'),
   crawl : crawl,
-  aggregate : require('./lib/aggregate'),
   readFile : readFile
 };
 

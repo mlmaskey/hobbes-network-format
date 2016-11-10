@@ -1,61 +1,88 @@
 var program = require('commander');
-var crawler = require('../lib/crawler');
+var path = require('path');
+var fs = require('fs');
 var validate = require('../lib/validate');
+var csvWriter = require('csv-write-stream');
 var colors = require('colors');
 
 program
-  .version('0.0.1')
-  .option('-p, --parse-data', 'Parse data files (csv, json, etc)')
-  .option('-r, --reindex', 'Walk data directory and generate root network.json & regions.json files before running')
-  .option('-v, --verbose', 'Verbose')
-  .option('-e, --verify', 'Verify geojson')
-  .option('-d, --directory [directory]', 'Root data directory to crawl')
+  .version(require('../package').version)
+  .usage('[options] [/path/to/hobbes/data]')
+  .description('Validate a HOBBES network')
+  .option('-d, --dump [file]', 'Dump errors to csv file')
   .parse(process.argv);
 
-if( !program.directory ) {
-  program.outputHelp();
-  return;
+if( program.args.length === 0 ) {
+   program.outputHelp();
+   return;
 }
 
-var options = {
-  parseCsvData: program.parseData || false,
-  debug: program.verbose || false,
-  reindex : program.reindex || false
-};
+var dir = program.args[0];
+if( !path.isAbsolute(dir) ) {
+  dir = path.join(process.cwd(), dir);
+}
 
-crawler(program.directory, options, function(resp, options){
-  onCrawlComplete(resp, options);
-});
+console.log('\n=======================================');
+console.log(require('./logo'));
+console.log('\n========= Network Validator ===========');
 
-function onCrawlComplete(crawlerResponse, options) {
-  var id = options.walkerConfig.id || 'id';
-  var rid = options.walkerConfig.regionId || 'id';
+if( !fs.existsSync(dir) ) {
+  return console.log(colors.red(`Invalid directory: ${dir}`));
+}
 
-  if( program.verify ) {
-    var errors = validate(crawlerResponse.nodes.features, {id: id});
-    var rerrors = validate(crawlerResponse.regions.features, {id: rid});
+process.stdout.write('Processing network');
 
-    if( errors > 0 ) {
-      console.log(colors.red('\nYour directory has '+errors+' node/link errors'));
-    } else {
-      console.log(colors.green('\nYour nodes and links are valid ('+crawlerResponse.nodes.features.length+')'));
-    }
+var i = 0;
+var timer = setInterval(function() {
+  process.stdout.clearLine();  // clear current text
+  process.stdout.cursorTo(0);  // move cursor to beginning of line
+  i = (i + 1) % 4;
+  var dots = new Array(i + 1).join('.');
+  process.stdout.write('Processing network' + dots);  // write text
+}, 500);
 
-    if( rerrors > 0 ) {
-      console.log(colors.red('Your directory has '+rerrors+' region errors\n'));
-    } else {
-      console.log(colors.green('Your regions are valid ('+crawlerResponse.regions.features.length+') \n'));
-    }
+
+validate(dir, (results) => {
+  clearInterval(timer);
+  process.stdout.clearLine();  // clear current text
+  process.stdout.cursorTo(0);  // move cursor to beginning of line
+
+  console.log(`
+Found:
+  Nodes   : ${results.nodes}
+  Links   : ${results.links}
+  Regions : ${results.regions}
+
+  `);
+
+  if( results.errors.length === 0 ) {
+    console.log('No Errors Found!\n');
+    return;
   } else {
-
-    console.log('\n**** Nodes and Links ('+crawlerResponse.nodes.features.length+') ****');
-    crawlerResponse.nodes.features.forEach(function(node){
-     console.log(node.properties[id]);
-    });
-
-    console.log('\n**** Regions ('+crawlerResponse.regions.features.length+') ****');
-    crawlerResponse.regions.features.forEach(function(node){
-     console.log(node.properties[rid]);
-    });
+    console.log(colors.red(`${results.errors.length} Errors Found:`));
   }
-}
+
+  var writer;
+  if( program.dump ) {
+    var exportFile;
+    if( program.dump === true ) {
+      exportFile = 'errors.csv';
+    } else {
+      exportFile = program.dump;
+    }
+    
+    if( path.parse(exportFile).ext === '' ) {
+      exportFile = exportFile+'.csv';
+    }
+    writer = csvWriter()
+    writer.pipe(fs.createWriteStream(exportFile))
+  }
+
+  results.errors.forEach((err) => {
+    console.log(colors.red(`${err.type} | ${err.message} | ${err.file}`));
+    if( writer ) writer.write(err);
+  });
+  if( writer ) writer.end();
+  console.log('');
+
+});
