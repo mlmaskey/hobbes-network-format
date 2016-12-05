@@ -27,7 +27,8 @@ var hnf = {
   expand : require('./lib/expand'),
   validate : require('./lib/validate'),
   crawl : crawl,
-  readFile : readFile
+  readFile : readFile,
+  split : require('./lib/split')
 };
 
 module.exports = hnf;

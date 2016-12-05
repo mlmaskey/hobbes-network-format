@@ -16,7 +16,7 @@ dirs.forEach((f) => {
   }
 });
 
-function process(link) {
+function processLink(link) {
   var data = JSON.parse(fs.readFileSync(path.join(link.path, link.file), 'utf-8').replace(/\r|\n/g,''));
 
   var origin = path.relative(link.path, nodesByPrm[data.origin ? data.origin : data.properties.origin]);
@@ -32,4 +32,4 @@ function process(link) {
   console.log(`  ${origin} -> ${terminus}`);
 }
 
-links.forEach(process);
+links.forEach(processLink);
