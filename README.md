@@ -1,5 +1,7 @@
 # hobbes-network-format
-Hobbes network filesystem format (HNFF) validator and tools
+Hobbes network filesystem (HNF) format library and validator
+
+![HobbesFormat](images/HOBBES-FileSystemFormat.png)
 
 ## README Overview
 
@@ -64,11 +66,17 @@ should be specified in their own folder with filename **node.geojson** or **node
 }
 ```
 
-Additional information will be added by the Hobbes Network Filesystem Crawler in
+Additional information will be added by the Hobbes Network Filesystem crawler in
 under node.properties.hobbes :
 
 ```js
 hobbes : {
+  // nodes will always be of hobbes type 'node' 
+  type : 'node',
+  
+  // hobbes unqiue identifier for node, generated from path
+  id : String,
+
   // list of all parent region identifiers.
   regions : [],
   // Parent region identifier
@@ -108,12 +116,6 @@ hobbes : {
       } // ...
     ]
   }
-
-  // nodes will always be of hobbes type 'node' 
-  type : 'node',
-  
-  // hobbes uid for node, generated from path
-  id : String,
   
   // links that have this node as the terminus
   origins : [
@@ -139,12 +141,12 @@ hobbes : {
 
 #### Links
 
-Links should be json formatted.  However, the link MUST provide an 'origin' and 'terminus' 
+Links should be JSON formatted.  However, the link MUST provide an 'origin' and 'terminus' 
 symbolic links within the same directory. The 'origin' and 'terminus' should point at the 
-origin node and terminus folders respectively.  The Hobbes Network Filesystem Crawler
+origin node and terminus folders respectively.  The Hobbes Network Filesystem crawler
 will lookup the origin and terminus nodes when crawling the network and set the
-appropriate 'LineString' geometry based on the geometry of the two nodes.  The json object
-will be set as the 'properties' of the newly created geojson object.
+appropriate 'LineString' geometry based on the geometry of the two nodes.  The JSON object
+will be set as the 'properties' of the newly created GeoJSON object.
 
 
 ```json
@@ -154,11 +156,23 @@ will be set as the 'properties' of the newly created geojson object.
 }
 ```
 
-Additional information will be added by the Hobbes Network Filesystem Crawler in
+Additional information will be added by the Hobbes Network Filesystem crawler in
 under node.properties.hobbes.
 
 ```js
 hobbes : {
+  // links will always be of hobbes type 'link' 
+  type : 'link',
+  
+  // hobbes uid for link, generated from path
+  id : String,
+  
+  // Origin node id
+  origin : String,
+
+  // Terminus node id
+  terminus : String,
+
   // list of all parent region identifiers.  Including origin and terminus nodes
   regions : [],
   // Parent region identifier
@@ -198,18 +212,6 @@ hobbes : {
       } // ...
     ]
   }
-
-  // links will always be of hobbes type 'link' 
-  type : 'link',
-  
-  // hobbes uid for link, generated from path
-  id : String,
-  
-  // Origin node id
-  origin : String,
-
-  // Terminus node id
-  terminus : String
 }
 ```
 
@@ -238,6 +240,12 @@ under node.properties.hobbes.
 
 ```js
 hobbes : {
+  // regions will always be of hobbes type 'region' 
+  type : 'region',
+  
+  // hobbes uid for region, generated from path
+  id : String,
+
   // list of all parent region identifiers.  Including origin and terminus nodes
   regions : [],
   // Parent region identifier
@@ -269,16 +277,7 @@ hobbes : {
     
     // $ref information
     files : []
-  }
-
-  // regions will always be of hobbes type 'region' 
-  type : 'regoin',
-  
-  // hobbes uid for region, generated from path
-  id : String,
-  
-  // Origin node id
-  origin : String,
+  },
 
   // List of all nodes that exist outside the region but have a link whos 
   // origin startes with the region.
@@ -314,7 +313,7 @@ hobbes : {
 ## Folder Structure
 
 Your nodes, links and region should be organized by folder.  While not a requirement
-(the Hobbes Network Filesystem Crawler will run just fine w/o region.geojson files),
+(the Hobbes Network Filesystem crawler will run just fine without region.geojson files),
 Regions give you a nice way to break out your nodes/links into multiple folders,
 providing easier lookups when editing and avoids giant folders with an unwieldy
 number of nodes.
@@ -355,7 +354,7 @@ You can see a real world example of the calvin network [here](https://github.com
 
 ## Referencing Data Files
 
-The Hobbes Network Filesystem Format is designed to help you develop network
+The Hobbes Network Filesystem format is designed to help you develop network
 data using the power of source control systems like Git.  In order to help track
 changes within your data it is helpful to break out your node data into several
 files.
@@ -371,7 +370,7 @@ does not.  Also, separating the data from the geojson keeps the geojson file
 #### $ref
 
 In order to link external data files to a geojson file, we have introduced? (well
-it may be a not well used standard...) a $ref notation.  The $ref contains a
+stole from JSON Schema) a $ref notation.  The $ref contains a
 relative path to the file that should be read.
 
 Let's say we have a fully formed node that looks like:
@@ -441,14 +440,8 @@ hnf --help
 
 #### Examples:
 
-Print all node, links and regions.
+Validate your HOBBES network
 
 ```bash
 hnf -d /path/to/you/data/repo
-```
-
-Verify the final result of all nodes and regions are valid geojson.
-
-```bash
-hnf -d /path/to/you/data/repo -e
 ```
