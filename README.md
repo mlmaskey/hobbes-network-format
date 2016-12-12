@@ -36,9 +36,9 @@ Say we have the following format file format:
 
 This would create:
 - region, id: california/delta
-- link, id: california/delta-link
-- node, id: california/north-bay
-- node, id: california/central-basin-west
+- link, id: california/delta/delta-link
+- node, id: california/delta/north-bay
+- node, id: california/delta/central-basin-west
 
 ## File Types
 
