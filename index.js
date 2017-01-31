@@ -18,7 +18,15 @@ function crawl(path, o, callback) {
 }
 
 function readFile(obj, attr, callback) {
-  _readFile(obj[attr].$ref, obj, attr, true, false, callback);
+  _readFile(
+    {
+      refParent : obj,
+      refAttr : attr,
+      path : obj[attr].$ref
+    },
+    {},
+    callback
+  );
 }
 
 
